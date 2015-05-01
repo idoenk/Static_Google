@@ -9,7 +9,7 @@
 // @include         http://www.google.*
 // @include         https://www.google.*
 // @include         https://encrypted.google.*
-// @version         0.2
+// @version         0.2.2
 // @run-at          document-start
 // ==/UserScript==
 /**
@@ -155,7 +155,7 @@ function setAttr(name, value, Obj){
     var top2nd = '33px'
     var hlh2nd = '30px'
     var css = ''
-    +'body.stgoogfixed #searchform{position:fixed'+i+'; top: 4px; cursor: n-resize;}'
+    +'body.stgoogfixed #searchform{position:fixed'+i+'; top:4px'+i+'; cursor: n-resize;}'
     +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 50px;}'
     +'body.stgoogfixed div#top_nav{position: fixed;top: 40px;width: 100%;height: '+top2nd+';background: #fff;z-index: 101;}'
     +'body.stgoogfixed div#hdtbSum{height: '+top2nd+';line-height: '+hlh2nd+';position:absolute; width:100%;}'
