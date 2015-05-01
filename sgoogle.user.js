@@ -156,7 +156,7 @@ function setAttr(name, value, Obj){
     var hlh2nd = '30px'
     var css = ''
     +'body.stgoogfixed #searchform{position:fixed'+i+'; top:4px'+i+'; cursor: n-resize;}'
-    +'body.stgoogfixed #cnt{padding-top:70px'+i';}'
+    +'body.stgoogfixed #cnt{padding-top:70px'+i+';}'
     +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 50px;}'
     +'body.stgoogfixed div#top_nav{position: fixed;top: 40px;width: 100%;height: '+top2nd+';background: #fff;z-index: 101;}'
     +'body.stgoogfixed div#hdtbSum{height: '+top2nd+';line-height: '+hlh2nd+';position:absolute; width:100%;}'
