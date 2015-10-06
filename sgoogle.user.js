@@ -10,17 +10,21 @@
 // @include         https://www.google.*
 // @include         https://encrypted.google.*
 // @version         0.2.2
+// @timestamp       1444128908196
 // @run-at          document-start
 // ==/UserScript==
 /**
 * Forked from:
 *  https://github.com/tumpio/gmscripts/blob/master/Static_Google/sgoogle.user.js
 *  By tumpio
+* 
+window.alert(new Date().getTime());
+*
 */
 
 // Do not run on iframes > image search
 if (window.top !== window.self) {
-    return;
+  return;
 }
 
 function clog(x){console.log(x)}
@@ -110,6 +114,14 @@ function _o(m,e,f){Dom.Ev(e,m,function(e){typeof(f)=='function'?f(e):void(0)});}
 function createTextEl(a) {
   return document.createTextNode(a)
 }
+function g(x, par){
+  !par && (par = document);
+  return ('string' == typeof x ? par.querySelector(x) : x);
+}
+function gAll(x, par){
+  !par && (par = document);
+  return ('string' == typeof x ? par.querySelectorAll(x) : x);
+}
 function createEl(a, b, c) {
   var d = document.createElement(a);
   for (var e in b)
@@ -151,13 +163,13 @@ function setAttr(name, value, Obj){
 }
 
 (function(window, document){
-    var i = '!important';
-    var top2nd = '33px';
-    var hlh2nd = '30px';
-    var grey_trans = 'background-color: rgba(241, 241, 241, 0.8)';
-    var white_trans = 'background-color:rgba(255,255,255, 0.7878)';
-    var bkwhite = 'background-color:#fff';
-    var css = ''
+  var i = '!important';
+  var top2nd = '33px';
+  var hlh2nd = '30px';
+  var grey_trans = 'background-color: rgba(241, 241, 241, 0.8)';
+  var white_trans = 'background-color:rgba(255,255,255, 0.7878)';
+  var bkwhite = 'background-color:#fff';
+  var css = ''
     +'body.stgoogfixed #searchform{position:fixed'+i+'; top:4px'+i+'; cursor: n-resize;}'
     +'body.stgoogfixed #cnt{padding-top:70px'+i+';}'
     +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 50px;'+grey_trans+';}'
@@ -171,60 +183,126 @@ function setAttr(name, value, Obj){
     +'body.stgoogfixed div#hdtb-msb .hdtb-mitem.hdtb-msel, body.stgoogfixed #hdtb-msb .hdtb-mitem.hdtb-msel-pre{height: '+hlh2nd+';}'
     +'body.stgoogfixed .hdtb-mn-o, body.stgoogfixed #hdtbMenus.hdtb-td-o{top:'+top2nd+i+';}'
     +''
-    ;
-    
-    var basic_css = ''
-    +'#searchform, #hdtbSum, #top_nav{ transition: top 220ms ease-in-out; -webkit-transition: top 220ms ease-in-out;}'
-    +'#topalert [href*="alerts"]{margin-bottom:0;}'
-    ;
-    GM_addGlobalStyle(basic_css);
-    
-    var el, id_css = 'stgoogfixed';
-    
-    if( !$D('#'+id_css) )
-      GM_addGlobalStyle(css, id_css);
-    
-    
-    function toggle_view(mode){
-      if( mode == 'fixed' ){
-        addClass(id_css, $D('body'));
-      }
-      else{
-        removeClass(id_css, $D('body'));
-      }
-    };
-    
-    document.addEventListener('DOMContentLoaded', function(){
-      // in news page?
-      var el = $D('//a[contains(@href,"alerts")]', null, true);
-      if( el ){
-        var ol = $D("ol", $D("#hdtbSum"), true);
-        var clNode = el.cloneNode(true);
-        var innerLi = createEl('li', {"class":"ab_ctl","id":"topalert"});
-        innerLi.appendChild(clNode);
-        
-        ol.insertBefore(innerLi, ol.firstChild);
-      }
+  ;
+  
+  var basic_css = ''
+  +'#searchform, #hdtbSum, #top_nav{ transition: top 220ms ease-in-out; -webkit-transition: top 220ms ease-in-out;}'
+  +'#topalert [href*="alerts"]{margin-bottom:0;}'
+  ;
+  GM_addGlobalStyle(basic_css);
+  
+  var el, id_css = 'stgoogfixed';
+  
+  if( !$D('#'+id_css) )
+    GM_addGlobalStyle(css, id_css);
+  
+  
+  function toggle_view(mode){
+    if( mode == 'fixed' ){
+      addClass(id_css, $D('body'));
+    }
+    else{
+      removeClass(id_css, $D('body'));
+    }
+  };
 
-      
-      // events
-      _o("scroll", window, function(){
-        var nVScroll = document.documentElement.scrollTop || document.body.scrollTop;
-        if( nVScroll > 0 ) 
-          toggle_view('fixed');
-        else
-          toggle_view('default');
-      });
+  // remove tracker onclick|onmousedown of result link
+  function cleanup_tracker(parent){
+    var el, par, newEl, els, elen, attr;
+    if("undefined" == typeof parent)
+      parent = null;
 
-      //click on fixed-bar
-      _o("click", $D("#searchform"), function(e){
-        var identy_el, e = e.target||e;
-        if( e ){
-          identy_el = e.parentNode;
-          if( identy_el && hasClass("nojsv", identy_el) )
-            window.scrollTo(0,0);
+    els = $D('//a[contains(@onmousedown,"return rwt")]', parent);
+
+    if( elen = els.snapshotLength )
+    for(var i=0; i<elen; i++){
+      el = els.snapshotItem(i);
+      par = el.parentNode;
+
+      el.onmousedown = "return !1";
+
+      attr = {href: getAttr("href", el)};
+      if( el.className )
+        attr["class"] = el.className;
+      newEl = createEl("a", attr, el.innerHTML);
+      par.replaceChild(newEl, el);
+    }
+    clog("els-len="+elen+'; cleanup done');
+  }
+
+  var observer = new MutationObserver(function(mutations) {
+    var BreakException = {};
+    try{
+      mutations.forEach(function(mev) {
+        // var $el = $(mev.target);
+        var lastNode, addedNodes = mev.addedNodes;
+        if( addedNodes.length > 0 ){
+          addedNodes = mev.target.lastElementChild;
+          clog(addedNodes);
+          lastNode = addedNodes.lastElementChild;
+          if( lastNode && (lastNode.id == 'ires') ){
+            // do cleanup...
+            setTimeout(function(){
+
+              cleanup_tracker($D('#search'));
+            }, 0);
+          }
         }
+        clog(mev);
+        
       });
-    }, false);
+    }catch(e){}
+  });
+  
+  document.addEventListener('DOMContentLoaded', function(){
+
+    var el, targetSearch;
+
+    targetSearch = $D('#search');
+    
+
+    // pass in the target node, as well as the observer options
+    observer.observe(targetSearch, {
+      attributes: false,
+      childList: true,
+      characterData: false
+    });
+
+    setTimeout(function(){
+      clog(targetSearch);
+      cleanup_tracker(targetSearch);
+    }, 2783);
+
+    
+    // in news page?
+    el = $D('//a[contains(@href,"alerts")]', null, true);
+    if( el ){
+      var ol = $D("ol", $D("#hdtbSum"), true);
+      var clNode = el.cloneNode(true);
+      var innerLi = createEl('li', {"class":"ab_ctl","id":"topalert"});
+      innerLi.appendChild(clNode);
+      
+      ol.insertBefore(innerLi, ol.firstChild);
+    }
+    
+    // events
+    _o("scroll", window, function(){
+      var nVScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      if( nVScroll > 0 ) 
+        toggle_view('fixed');
+      else
+        toggle_view('default');
+    });
+
+    //click on fixed-bar
+    _o("click", $D("#searchform"), function(e){
+      var identy_el, e = e.target||e;
+      if( e ){
+        identy_el = e.parentNode;
+        if( identy_el && hasClass("nojsv", identy_el) )
+          window.scrollTo(0,0);
+      }
+    });
+  }, false);
     
 })(window, document);
