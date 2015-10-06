@@ -8,3 +8,4 @@ Google search interface always visible on screen, and some additional changes fo
 
 Forked version from [Static_Google by tumpio](https://github.com/tumpio/gmscripts/blob/master/Static_Google/sgoogle.user.js):
  
+..
