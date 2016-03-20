@@ -170,9 +170,9 @@ function setAttr(name, value, Obj){
   var white_trans = 'background-color:rgba(255,255,255, 0.7878)';
   var bkwhite = 'background-color:#fff';
   var css = ''
-    +'body.stgoogfixed #searchform{position:fixed'+i+'; top:4px'+i+'; cursor: n-resize;}'
+    +'body.stgoogfixed #searchform{position:fixed'+i+'; top:6px'+i+'; cursor: n-resize;}'
     +'body.stgoogfixed #cnt{padding-top:70px'+i+';}'
-    +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 50px;'+grey_trans+';}'
+    +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 48px;'+grey_trans+';}'
     +'body.stgoogfixed #sfdiv, body.stgoogfixed #sfdiv > div:first-child{background-color: transparent;}'
     +'body.stgoogfixed #sfdiv.sbfcn, body.stgoogfixed #searchform:hover #sfdiv{'+bkwhite+';}'
     +'body.stgoogfixed #searchform:hover div#gb + div{background:#f1f1f1;}'
@@ -227,7 +227,7 @@ function setAttr(name, value, Obj){
       newEl = createEl("a", attr, el.innerHTML);
       par.replaceChild(newEl, el);
     }
-    clog("els-len="+elen+'; cleanup done');
+    //clog("els-len="+elen+'; cleanup done');
   }
 
   var observer = new MutationObserver(function(mutations) {
@@ -238,7 +238,7 @@ function setAttr(name, value, Obj){
         var lastNode, addedNodes = mev.addedNodes;
         if( addedNodes.length > 0 ){
           addedNodes = mev.target.lastElementChild;
-          clog(addedNodes);
+          //clog(addedNodes);
           lastNode = addedNodes.lastElementChild;
           if( lastNode && (lastNode.id == 'ires') ){
             // do cleanup...
@@ -248,7 +248,7 @@ function setAttr(name, value, Obj){
             }, 0);
           }
         }
-        clog(mev);
+        //clog(mev);
         
       });
     }catch(e){}
@@ -262,6 +262,7 @@ function setAttr(name, value, Obj){
     
 
     // pass in the target node, as well as the observer options
+    if( targetSearch )
     observer.observe(targetSearch, {
       attributes: false,
       childList: true,
