@@ -9,7 +9,7 @@
 // @include         http://www.google.*
 // @include         https://www.google.*
 // @include         https://encrypted.google.*
-// @version         0.3
+// @version         0.4
 // @timestamp       1444128908196
 // @run-at          document-start
 // ==/UserScript==
@@ -17,7 +17,7 @@
 * Forked from:
 *  https://github.com/tumpio/gmscripts/blob/master/Static_Google/sgoogle.user.js
 *  By tumpio
-* 
+*
 window.alert(new Date().getTime());
 *
 */
@@ -34,7 +34,7 @@ if (window.top !== window.self) {
 // native add - remove element
 var Dom = {
   remove: function(el) {
-    var el = $D(el);
+    el = $D(el);
     if (el && el.parentNode)
       el.parentNode.removeChild(el);
   },
@@ -57,7 +57,7 @@ var Dom = {
     }
   }(),
 };
-function clog(x){if(gvar.__DEBUG__) console.log(x)}
+function clog(x){if(gvar.__DEBUG__) console.log(x);}
 function $D(q, root, single) {
     var el;
     if (root && typeof root == 'string') {
@@ -83,7 +83,7 @@ function $D(q, root, single) {
     else{
         return root.querySelector(q);
     }
-};
+}
 function GM_addGlobalStyle(a, b, c) {
   var d, e;
   if (a.match(/^https?:\/\/.+/)) {
@@ -94,7 +94,7 @@ function GM_addGlobalStyle(a, b, c) {
   }
   if (isDefined(b) && isString(b)) d.setAttribute("id", b);
   c = ("undefined" == typeof c ? !1 : (!c ? document.body : c));
-  
+
   if ( c ) {
       c.appendChild(d)
   } else {
@@ -172,14 +172,14 @@ function setAttr(name, value, Obj){
       i = '!important',
       top2nd = '33px',
       hlh2nd = '30px',
-      grey_trans = 'background-color: rgba(241, 241, 241, 0.8)',
+      grey_trans = 'background-color: rgba(241, 241, 241, 0.45)',
       white_trans = 'background-color:rgba(255,255,255, 0.7878)',
       bkwhite = 'background-color:#fff',
       basic_css = '',
       css = ''
-        +'body.stgoogfixed #searchform{position:fixed'+i+'; top:6px'+i+'; cursor: n-resize;}'
+        +'body.stgoogfixed #searchform{position:fixed'+i+'; top:0'+i+'; cursor: n-resize;}'
         +'body.stgoogfixed #cnt{padding-top:70px'+i+';}'
-        +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{height: 48px;'+grey_trans+';}'
+        +'body.stgoogfixed div#gb + div, body.stgoogfixed #gb + div > div{'+grey_trans+';}'
         +'body.stgoogfixed #sfdiv, body.stgoogfixed #sfdiv > div:first-child{background-color: transparent;}'
         +'body.stgoogfixed #sfdiv.sbfcn, body.stgoogfixed #searchform:hover #sfdiv{'+bkwhite+';}'
         +'body.stgoogfixed #searchform:hover div#gb + div{background:#f1f1f1;}'
@@ -187,22 +187,23 @@ function setAttr(name, value, Obj){
         +'body.stgoogfixed div#top_nav, body.stgoogfixed div#hdtbSum{'+white_trans+';}'
         +'body.stgoogfixed div#top_nav:hover, body.stgoogfixed #searchform:hover + #main div#top_nav{'+bkwhite+';}'
         +'body.stgoogfixed div#hdtbSum{height: '+top2nd+';line-height: '+hlh2nd+';position:absolute; width:100%;}'
-        +'body.stgoogfixed div#hdtb-msb .hdtb-mitem.hdtb-msel, body.stgoogfixed #hdtb-msb .hdtb-mitem.hdtb-msel-pre{height: '+hlh2nd+';}'
-        +'body.stgoogfixed .hdtb-mn-o, body.stgoogfixed #hdtbMenus.hdtb-td-o{top:'+top2nd+i+';}',
+        +'body.stgoogfixed div#hdtb-msb .hdtb-mitem.hdtb-msel, body.stgoogfixed #hdtb-msb .hdtb-mitem.hdtb-msel-pre{height: 22px; padding: 0px 16px 0;}'
+        +'body.stgoogfixed #hdtbMenus.hdtb-td-o{top:50px'+i+'; background-color: #fff;}'
+      +'body.stgoogfixed .sbico-c{background-color: #fff;}'
+      ;
       el = null
   ;
-  
+
   basic_css = ''
     +'#searchform, #hdtbSum, #top_nav{ transition: top 220ms ease-in-out; -webkit-transition: top 220ms ease-in-out;}'
     +'#topalert [href*="alerts"]{margin-bottom:0;}'
   ;
   GM_addGlobalStyle(basic_css);
-  
-  
+
+
   if( !$D('#'+id_css) )
     GM_addGlobalStyle(css, id_css);
-  
-  
+
   function toggle_view(mode){
     if( mode == 'fixed' ){
       addClass(id_css, $D('body'));
@@ -244,7 +245,6 @@ function setAttr(name, value, Obj){
           addedNodes = mev.target.lastElementChild;
           lastNode = addedNodes.lastElementChild;
           if( lastNode && /^idb/i.test(lastNode.id) ){
-            
             clog('lastNode');
             clog(lastNode);
           }
@@ -252,7 +252,7 @@ function setAttr(name, value, Obj){
       });
     }catch(e){}
   });
-  
+
   document.addEventListener('DOMContentLoaded', function(){
 
     var targetSearch = $D('#main'), el;
@@ -270,7 +270,7 @@ function setAttr(name, value, Obj){
       cleanup_tracker(targetSearch);
     }, 2783);
 
-    
+
     // in news page?
     el = $D('//a[contains(@href,"alerts") and contains(@class,"ab_button")]', null, true);
     if( el ){
@@ -285,11 +285,11 @@ function setAttr(name, value, Obj){
         ol.insertBefore(innerLi, ol.firstChild);
       }
     }
-    
+
     // events
     _o("scroll", window, function(){
       var nVScroll = document.documentElement.scrollTop || document.body.scrollTop;
-      if( nVScroll > 0 ) 
+      if( nVScroll > 0 )
         toggle_view('fixed');
       else
         toggle_view('default');
